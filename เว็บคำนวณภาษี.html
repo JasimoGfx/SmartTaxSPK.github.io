@@ -1,0 +1,1086 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>💼</text></svg>">
+<title>คำนวณภาษีไทย 2569</title>
+<link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700;800&family=Noto+Serif+Thai:wght@700;900&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+:root {
+  --bg: #f0f4ff;
+  --card: #ffffff;
+  --card2: #f7f9ff;
+  --primary: #2563eb;
+  --primary-light: #dbeafe;
+  --accent: #f59e0b;
+  --accent-light: #fef3c7;
+  --green: #10b981;
+  --green-light: #d1fae5;
+  --red: #ef4444;
+  --red-light: #fee2e2;
+  --purple: #8b5cf6;
+  --text: #1e293b;
+  --text2: #64748b;
+  --text3: #94a3b8;
+  --border: #e2e8f0;
+  --shadow: 0 1px 3px rgba(0,0,0,.08), 0 8px 24px rgba(0,0,0,.06);
+  --shadow-lg: 0 4px 6px rgba(0,0,0,.05), 0 20px 60px rgba(37,99,235,.12);
+  --radius: 20px;
+}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Sarabun', sans-serif;
+  min-height: 100vh;
+  background-image:
+    radial-gradient(circle at 20% 0%, #dbeafe88 0%, transparent 50%),
+    radial-gradient(circle at 80% 100%, #f3e8ff66 0%, transparent 50%);
+}
+
+/* ===== HEADER ===== */
+.header {
+  text-align: center;
+  padding: 48px 24px 32px;
+}
+.header-badge {
+  display: inline-flex; align-items: center; gap: 6px;
+  background: var(--primary-light); color: var(--primary);
+  font-size: 12px; font-weight: 700; letter-spacing: 1.5px;
+  text-transform: uppercase; padding: 5px 14px; border-radius: 100px;
+  margin-bottom: 16px;
+}
+.header h1 {
+  font-family: 'Noto Serif Thai', serif;
+  font-size: clamp(28px, 5vw, 48px); font-weight: 900;
+  color: var(--text); line-height: 1.2; margin-bottom: 8px;
+}
+.header h1 span { color: var(--primary); }
+.header p { color: var(--text2); font-size: 15px; }
+
+/* ===== MAIN LAYOUT ===== */
+.main { max-width: 1100px; margin: 0 auto; padding: 0 20px 60px; }
+
+.grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+@media(max-width: 768px) { .grid { grid-template-columns: 1fr; } }
+
+/* ===== CARD ===== */
+.card {
+  background: var(--card); border-radius: var(--radius);
+  padding: 28px; box-shadow: var(--shadow);
+  border: 1px solid var(--border);
+}
+.card-title {
+  font-size: 13px; font-weight: 700; letter-spacing: 1.5px;
+  text-transform: uppercase; color: var(--text3); margin-bottom: 20px;
+  display: flex; align-items: center; gap: 8px;
+}
+.card-title .dot {
+  width: 8px; height: 8px; border-radius: 50%; background: var(--primary);
+}
+
+/* ===== INPUTS ===== */
+.input-group { margin-bottom: 18px; }
+.input-label {
+  font-size: 13px; font-weight: 600; color: var(--text2);
+  margin-bottom: 6px; display: flex; justify-content: space-between;
+}
+.input-label .hint { color: var(--text3); font-weight: 400; }
+
+.input-wrap {
+  position: relative; display: flex; align-items: center;
+}
+.input-prefix {
+  position: absolute; left: 14px; font-size: 16px; font-weight: 700;
+  color: var(--text3); pointer-events: none;
+}
+input[type="range"] {
+  width: 100%; height: 6px; background: var(--border);
+  border-radius: 100px; outline: none; cursor: pointer;
+  -webkit-appearance: none; appearance: none;
+}
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none; width: 20px; height: 20px;
+  border-radius: 50%; background: var(--primary);
+  border: 3px solid white; box-shadow: 0 2px 8px rgba(37,99,235,.3);
+  cursor: pointer;
+}
+.range-labels {
+  display: flex; justify-content: space-between;
+  font-size: 11px; color: var(--text3); margin-top: 4px;
+}
+input[type="number"] {
+  width: 100%; padding: 12px 14px 12px 34px;
+  border: 2px solid var(--border); border-radius: 12px;
+  font-size: 18px; font-weight: 700; font-family: 'Sarabun', sans-serif;
+  color: var(--text); outline: none; transition: border-color .2s;
+  background: var(--card);
+}
+input[type="number"]:focus { border-color: var(--primary); }
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button { -webkit-appearance: none; }
+
+.salary-display {
+  text-align: center; margin-bottom: 20px;
+}
+.salary-big {
+  font-family: 'Noto Serif Thai', serif;
+  font-size: 40px; font-weight: 900; color: var(--primary);
+  line-height: 1;
+}
+.salary-sub { font-size: 13px; color: var(--text3); margin-top: 4px; }
+
+/* ===== PERIOD TABS ===== */
+.tabs {
+  display: flex; background: var(--bg); border-radius: 12px;
+  padding: 3px; margin-bottom: 20px; gap: 3px;
+}
+.tab {
+  flex: 1; padding: 8px 4px; text-align: center; font-size: 13px;
+  font-weight: 600; color: var(--text2); cursor: pointer;
+  border-radius: 9px; border: none; background: none;
+  transition: all .2s; font-family: 'Sarabun', sans-serif;
+}
+.tab.active { background: var(--card); color: var(--primary); box-shadow: var(--shadow); }
+
+/* ===== DEDUCTION TOGGLES ===== */
+.deduction-list { display: grid; gap: 10px; }
+.deduction-item {
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 10px;
+}
+.deduction-item label {
+  font-size: 14px; color: var(--text); flex: 1; cursor: pointer;
+  display: flex; align-items: center; gap: 8px;
+}
+.deduction-item label .icon { font-size: 16px; }
+.deduction-val {
+  font-size: 13px; font-weight: 700; color: var(--green);
+  white-space: nowrap; min-width: 80px; text-align: right;
+}
+
+/* toggle switch */
+.toggle { position: relative; width: 38px; height: 22px; flex-shrink: 0; }
+.toggle input { opacity: 0; width: 0; height: 0; }
+.toggle-track {
+  position: absolute; inset: 0; border-radius: 100px;
+  background: var(--border); cursor: pointer; transition: .2s;
+}
+.toggle input:checked + .toggle-track { background: var(--primary); }
+.toggle-track::after {
+  content: ''; position: absolute; top: 3px; left: 3px;
+  width: 16px; height: 16px; border-radius: 50%;
+  background: white; transition: .2s;
+  box-shadow: 0 1px 3px rgba(0,0,0,.2);
+}
+.toggle input:checked + .toggle-track::after { transform: translateX(16px); }
+
+/* custom deduction input */
+.custom-input {
+  display: flex; gap: 8px; align-items: center;
+  background: var(--card2); border-radius: 10px; padding: 8px 12px;
+  border: 1px dashed var(--border);
+}
+.custom-input label { font-size: 13px; color: var(--text2); white-space: nowrap; }
+.custom-input input {
+  flex: 1; border: none; background: none;
+  font-size: 14px; font-weight: 600; color: var(--primary);
+  padding: 0; min-width: 0;
+}
+.custom-input input:focus { outline: none; }
+
+/* ===== RESULTS ===== */
+.result-hero {
+  background: linear-gradient(135deg, var(--primary) 0%, #1d4ed8 100%);
+  border-radius: 16px; padding: 24px; color: white; margin-bottom: 20px;
+  position: relative; overflow: hidden;
+}
+.result-hero::before {
+  content: ''; position: absolute;
+  width: 200px; height: 200px; border-radius: 50%;
+  background: rgba(255,255,255,.06);
+  top: -60px; right: -40px;
+}
+.result-hero::after {
+  content: ''; position: absolute;
+  width: 120px; height: 120px; border-radius: 50%;
+  background: rgba(255,255,255,.04);
+  bottom: -30px; left: 20px;
+}
+.result-hero-label { font-size: 12px; opacity: .75; letter-spacing: 1px; text-transform: uppercase; }
+.result-hero-amount {
+  font-family: 'Noto Serif Thai', serif;
+  font-size: 38px; font-weight: 900; line-height: 1.1; margin: 4px 0;
+}
+.result-hero-sub { font-size: 13px; opacity: .7; }
+
+.result-row {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 11px 0; border-bottom: 1px solid var(--border);
+}
+.result-row:last-child { border-bottom: none; }
+.result-row-label { font-size: 14px; color: var(--text2); display: flex; align-items: center; gap: 8px; }
+.result-row-label .bullet {
+  width: 10px; height: 10px; border-radius: 3px; flex-shrink: 0;
+}
+.result-row-amount { font-size: 15px; font-weight: 700; }
+.result-row-amount.neg { color: var(--red); }
+.result-row-amount.pos { color: var(--green); }
+.result-row-amount.muted { color: var(--text3); }
+
+/* ===== RATE BADGES ===== */
+.rate-row {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 12px;
+  margin-top: 16px;
+}
+.rate-box {
+  background: var(--card2); border-radius: 12px; padding: 14px;
+  text-align: center; border: 1px solid var(--border);
+}
+.rate-box .rate-val {
+  font-family: 'Noto Serif Thai', serif;
+  font-size: 26px; font-weight: 900; color: var(--primary);
+}
+.rate-box .rate-label { font-size: 11px; color: var(--text3); margin-top: 2px; }
+
+/* ===== DONUT CHART ===== */
+.donut-wrap {
+  display: flex; align-items: center; justify-content: center;
+  gap: 24px; margin: 20px 0;
+  flex-wrap: wrap;
+}
+.donut-container { position: relative; width: 160px; height: 160px; flex-shrink: 0; }
+.donut-svg { width: 100%; height: 100%; transform: rotate(-90deg); }
+.donut-circle-bg {
+  fill: none; stroke: var(--border); stroke-width: 20;
+}
+.donut-arc {
+  fill: none; stroke-width: 20; stroke-linecap: round;
+  transition: stroke-dasharray .5s cubic-bezier(.4,0,.2,1),
+              stroke-dashoffset .5s cubic-bezier(.4,0,.2,1);
+}
+.donut-center {
+  position: absolute; inset: 0; display: flex;
+  flex-direction: column; align-items: center; justify-content: center;
+}
+.donut-center-val {
+  font-family: 'Noto Serif Thai', serif;
+  font-size: 20px; font-weight: 900; color: var(--text); line-height: 1;
+}
+.donut-center-label { font-size: 11px; color: var(--text3); }
+
+.donut-legend { display: grid; gap: 8px; flex: 1; min-width: 140px; }
+.legend-item { display: flex; align-items: center; gap: 8px; }
+.legend-dot { width: 10px; height: 10px; border-radius: 3px; flex-shrink: 0; }
+.legend-name { font-size: 13px; color: var(--text2); flex: 1; }
+.legend-pct { font-size: 13px; font-weight: 700; color: var(--text); }
+
+/* ===== BAR CHART ===== */
+.bars-wrap { margin: 4px 0; }
+.bar-row { margin-bottom: 14px; }
+.bar-row-header {
+  display: flex; justify-content: space-between;
+  font-size: 13px; margin-bottom: 6px;
+}
+.bar-row-label { color: var(--text2); }
+.bar-row-val { font-weight: 700; color: var(--text); }
+.bar-track {
+  height: 10px; background: var(--border); border-radius: 100px;
+  overflow: hidden;
+}
+.bar-fill {
+  height: 100%; border-radius: 100px;
+  transition: width .5s cubic-bezier(.4,0,.2,1);
+}
+
+/* ===== LADDER CHART ===== */
+.ladder-chart { margin-top: 4px; }
+.ladder-row {
+  display: flex; align-items: center; gap: 10px; margin-bottom: 8px;
+}
+.ladder-rate {
+  width: 34px; font-size: 12px; font-weight: 700;
+  text-align: right; flex-shrink: 0; color: var(--text3);
+}
+.ladder-bar-wrap { flex: 1; }
+.ladder-bar {
+  height: 28px; border-radius: 8px; position: relative;
+  display: flex; align-items: center; padding-left: 10px;
+  overflow: hidden; transition: width .5s cubic-bezier(.4,0,.2,1);
+  min-width: 30px;
+}
+.ladder-bar-amount {
+  font-size: 12px; font-weight: 700; color: white; white-space: nowrap;
+  position: relative; z-index: 1;
+}
+.ladder-empty {
+  font-size: 12px; color: var(--text3); padding-left: 8px;
+}
+.ladder-tax {
+  width: 70px; font-size: 12px; font-weight: 700;
+  text-align: right; flex-shrink: 0;
+}
+
+/* ===== MONTHLY BREAKDOWN ===== */
+.monthly-grid {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 4px;
+}
+.monthly-item {
+  background: var(--card2); border-radius: 12px; padding: 14px;
+  border: 1px solid var(--border);
+}
+.monthly-item .m-label { font-size: 12px; color: var(--text3); margin-bottom: 4px; }
+.monthly-item .m-val {
+  font-family: 'Noto Serif Thai', serif;
+  font-size: 20px; font-weight: 900;
+}
+
+/* ===== COMPARISON BAR ===== */
+.compare-bar-wrap { margin: 16px 0 4px; }
+.compare-bar-labels { display: flex; justify-content: space-between; font-size: 12px; color: var(--text3); margin-bottom: 6px; }
+.compare-bar {
+  height: 36px; background: var(--green-light); border-radius: 10px;
+  overflow: hidden; display: flex; position: relative;
+}
+.compare-bar-net {
+  height: 100%; background: var(--green); border-radius: 10px;
+  transition: width .5s cubic-bezier(.4,0,.2,1);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 12px; font-weight: 700; color: white; white-space: nowrap;
+  padding: 0 10px;
+}
+.compare-bar-tax {
+  flex: 1; display: flex; align-items: center; justify-content: center;
+  font-size: 12px; font-weight: 600; color: var(--red);
+}
+
+/* ===== SECTION TITLE ===== */
+.section-label {
+  font-size: 12px; font-weight: 700; letter-spacing: 1.5px;
+  text-transform: uppercase; color: var(--text3);
+  margin: 20px 0 12px; display: flex; align-items: center; gap: 8px;
+}
+.section-label::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+
+/* ===== ANIMATED COUNTER ===== */
+.count-anim { transition: all .3s ease; }
+
+/* ===== FULL WIDTH CARD ===== */
+.full-card { grid-column: 1 / -1; }
+
+/* ===== TAX SUMMARY WIDE ===== */
+.summary-grid {
+  display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px;
+}
+@media(max-width: 768px) { .summary-grid { grid-template-columns: repeat(2, 1fr); } }
+.summary-stat {
+  background: var(--card); border-radius: 16px; padding: 18px;
+  border: 1px solid var(--border); text-align: center;
+}
+.summary-stat .ss-icon { font-size: 24px; margin-bottom: 8px; }
+.summary-stat .ss-val {
+  font-family: 'Noto Serif Thai', serif;
+  font-size: 22px; font-weight: 900; line-height: 1;
+}
+.summary-stat .ss-label { font-size: 12px; color: var(--text3); margin-top: 4px; }
+
+/* colors */
+.c-blue { color: var(--primary); }
+.c-green { color: var(--green); }
+.c-red { color: var(--red); }
+.c-amber { color: var(--accent); }
+.c-purple { color: var(--purple); }
+
+.bg-blue { background: var(--primary); }
+.bg-green { background: var(--green); }
+.bg-red { background: var(--red); }
+.bg-amber { background: var(--accent); }
+.bg-purple { background: var(--purple); }
+
+.divider { height: 1px; background: var(--border); margin: 16px 0; }
+
+/* ===== TOOLTIP ===== */
+.tooltip-wrap { position: relative; display: inline-flex; align-items: center; }
+.tooltip-icon {
+  width: 14px; height: 14px; border-radius: 50%; background: var(--border);
+  color: var(--text3); font-size: 10px; display: inline-flex;
+  align-items: center; justify-content: center; cursor: help; margin-left: 4px;
+}
+.tooltip-text {
+  position: absolute; bottom: 100%; left: 50%; transform: translateX(-50%);
+  background: var(--text); color: white; font-size: 12px; white-space: nowrap;
+  padding: 6px 10px; border-radius: 8px; margin-bottom: 6px;
+  opacity: 0; pointer-events: none; transition: opacity .2s;
+  z-index: 10;
+}
+.tooltip-wrap:hover .tooltip-text { opacity: 1; }
+
+/* sparkle animation */
+@keyframes pulse { 0%,100% { opacity:1 } 50% { opacity:.5 } }
+.live-dot {
+  width: 8px; height: 8px; border-radius: 50%; background: var(--green);
+  animation: pulse 1.5s infinite;
+}
+
+/* ===== RESPONSIVE ===== */
+@media(max-width: 500px) {
+  .header { padding: 32px 16px 20px; }
+  .card { padding: 20px 16px; }
+  .result-hero-amount { font-size: 28px; }
+  .donut-wrap { flex-direction: column; }
+  .summary-grid { grid-template-columns: 1fr 1fr; }
+}
+
+/* footer */
+.footer {
+  text-align: center; padding: 32px; color: var(--text3);
+  font-size: 12px; border-top: 1px solid var(--border);
+  background: var(--card); margin-top: 40px;
+}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-badge">
+    <span class="live-dot"></span>
+    อัปเดต realtime · ปี 2569
+  </div>
+  <h1>คำนวณ<span>ภาษี</span>ไทย</h1>
+  <p>ใส่รายได้และค่าลดหย่อน ผลลัพธ์จะอัปเดตทันที พร้อมกราฟวิเคราะห์</p>
+</div>
+
+<div class="main">
+
+  <!-- SUMMARY STATS BAR -->
+  <div class="summary-grid" style="margin-bottom:20px;" id="summaryBar">
+    <div class="summary-stat">
+      <div class="ss-icon">💼</div>
+      <div class="ss-val c-blue" id="s-gross">0</div>
+      <div class="ss-label">รายได้ทั้งปี</div>
+    </div>
+    <div class="summary-stat">
+      <div class="ss-icon">💸</div>
+      <div class="ss-val c-red" id="s-tax">0</div>
+      <div class="ss-label">ภาษีที่ต้องจ่าย</div>
+    </div>
+    <div class="summary-stat">
+      <div class="ss-icon">💰</div>
+      <div class="ss-val c-green" id="s-net">0</div>
+      <div class="ss-label">รายได้สุทธิ</div>
+    </div>
+    <div class="summary-stat">
+      <div class="ss-icon">📊</div>
+      <div class="ss-val c-amber" id="s-rate">0%</div>
+      <div class="ss-label">อัตราภาษีจริง</div>
+    </div>
+  </div>
+
+  <div class="grid">
+
+    <!-- LEFT: INPUT PANEL -->
+    <div>
+      <div class="card" style="margin-bottom:20px;">
+        <div class="card-title"><span class="dot"></span>รายได้ของคุณ</div>
+
+        <!-- Period Tabs -->
+        <div class="tabs">
+          <button class="tab active" onclick="setPeriod('year',this)">ต่อปี</button>
+          <button class="tab" onclick="setPeriod('month',this)">ต่อเดือน</button>
+          <button class="tab" onclick="setPeriod('day',this)">ต่อวัน</button>
+          <button class="tab" onclick="setPeriod('hour',this)">ต่อชั่วโมง</button>
+        </div>
+
+        <!-- Salary Display -->
+        <div class="salary-display">
+          <div class="salary-big" id="salaryDisplay">฿600,000</div>
+          <div class="salary-sub" id="salarySubDisplay">ต่อปี</div>
+        </div>
+
+        <!-- Range Slider -->
+        <div class="input-group">
+          <input type="range" id="salarySlider" min="0" max="5000000" step="10000" value="600000"
+                 oninput="onSliderChange(this.value)">
+          <div class="range-labels"><span>฿0</span><span>฿5,000,000</span></div>
+        </div>
+
+        <!-- Number Input -->
+        <div class="input-group">
+          <div class="input-label">
+            <span>กรอกรายได้เอง</span>
+            <span class="hint" id="periodHint">ต่อปี (บาท)</span>
+          </div>
+          <div class="input-wrap">
+            <span class="input-prefix">฿</span>
+            <input type="number" id="salaryInput" value="600000" placeholder="0"
+                   oninput="onInputChange(this.value)">
+          </div>
+        </div>
+      </div>
+
+      <!-- DEDUCTIONS CARD -->
+      <div class="card">
+        <div class="card-title"><span class="dot" style="background:var(--green)"></span>ค่าลดหย่อนภาษี</div>
+        <div class="deduction-list" id="deductionList">
+          <!-- generated by JS -->
+        </div>
+
+        <div class="section-label" style="margin-top:16px;">ลดหย่อนพิเศษ</div>
+        <div class="custom-input">
+          <label for="customDeduct">🎁 ลดหย่อนอื่นๆ</label>
+          <input type="number" id="customDeduct" placeholder="0" oninput="recalculate()">
+          <span style="font-size:13px;color:var(--text3);">บาท</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- RIGHT: RESULTS -->
+    <div>
+
+      <!-- NET PAY HERO -->
+      <div class="result-hero" style="margin-bottom:20px;">
+        <div class="result-hero-label">รายได้สุทธิหลังหักภาษี · ต่อปี</div>
+        <div class="result-hero-amount" id="netPayYear">฿0</div>
+        <div class="result-hero-sub" id="netPayMonth">฿0 ต่อเดือน</div>
+      </div>
+
+      <!-- BREAKDOWN -->
+      <div class="card" style="margin-bottom:20px;">
+        <div class="card-title"><span class="dot" style="background:var(--red)"></span>สรุปการหักภาษี</div>
+
+        <div class="result-row">
+          <div class="result-row-label">
+            <span class="bullet bg-blue" style="border-radius:3px;"></span>
+            รายได้ทั้งปี
+          </div>
+          <div class="result-row-amount c-blue" id="r-gross">฿0</div>
+        </div>
+        <div class="result-row">
+          <div class="result-row-label">
+            <span class="bullet" style="background:#94a3b8;border-radius:3px;"></span>
+            ค่าใช้จ่าย (หักอัตโนมัติ)
+          </div>
+          <div class="result-row-amount neg" id="r-expense">−฿0</div>
+        </div>
+        <div class="result-row">
+          <div class="result-row-label">
+            <span class="bullet bg-green" style="border-radius:3px;"></span>
+            ค่าลดหย่อนทั้งหมด
+          </div>
+          <div class="result-row-amount neg" id="r-deduct">−฿0</div>
+        </div>
+        <div class="result-row" style="background:var(--card2);border-radius:10px;padding:10px 12px;margin:-4px 0;">
+          <div class="result-row-label" style="font-weight:700;">เงินได้สุทธิ (ฐานภาษี)</div>
+          <div class="result-row-amount" id="r-taxable" style="color:var(--text);">฿0</div>
+        </div>
+        <div class="result-row">
+          <div class="result-row-label">
+            <span class="bullet bg-red" style="border-radius:3px;"></span>
+            ภาษีเงินได้บุคคลธรรมดา
+          </div>
+          <div class="result-row-amount neg" id="r-income-tax">−฿0</div>
+        </div>
+        <div class="result-row">
+          <div class="result-row-label">
+            <span class="bullet bg-amber" style="border-radius:3px;"></span>
+            ประกันสังคม
+          </div>
+          <div class="result-row-amount neg" id="r-sso">−฿0</div>
+        </div>
+        <div class="divider"></div>
+        <div class="result-row">
+          <div class="result-row-label" style="font-weight:700;font-size:15px;">รายได้สุทธิ</div>
+          <div class="result-row-amount pos" style="font-size:17px;" id="r-net">฿0</div>
+        </div>
+
+        <div class="rate-row">
+          <div class="rate-box">
+            <div class="rate-val" id="r-avg-rate">0%</div>
+            <div class="rate-label">อัตราภาษีเฉลี่ย</div>
+          </div>
+          <div class="rate-box">
+            <div class="rate-val" id="r-marginal-rate">0%</div>
+            <div class="rate-label">อัตราภาษีส่วนเพิ่ม</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- MONTHLY BREAKDOWN -->
+      <div class="card">
+        <div class="card-title"><span class="dot" style="background:var(--purple)"></span>รายรับต่อเดือน</div>
+        <div class="monthly-grid">
+          <div class="monthly-item">
+            <div class="m-label">💼 รายได้ต่อเดือน</div>
+            <div class="m-val c-blue" id="m-gross">฿0</div>
+          </div>
+          <div class="monthly-item">
+            <div class="m-label">💸 ภาษีต่อเดือน</div>
+            <div class="m-val c-red" id="m-tax">฿0</div>
+          </div>
+          <div class="monthly-item">
+            <div class="m-label">💰 สุทธิต่อเดือน</div>
+            <div class="m-val c-green" id="m-net">฿0</div>
+          </div>
+          <div class="monthly-item">
+            <div class="m-label">📅 สุทธิต่อวัน</div>
+            <div class="m-val c-purple" id="m-day">฿0</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- FULL WIDTH: CHARTS -->
+
+    <!-- DONUT + BAR -->
+    <div class="card">
+      <div class="card-title"><span class="dot" style="background:var(--accent)"></span>สัดส่วนรายได้</div>
+
+      <div class="donut-wrap">
+        <div class="donut-container">
+          <svg class="donut-svg" viewBox="0 0 100 100">
+            <circle class="donut-circle-bg" cx="50" cy="50" r="35"/>
+            <!-- Net -->
+            <circle class="donut-arc" id="arc-net" cx="50" cy="50" r="35"
+                    stroke="#10b981" stroke-dasharray="0 220" stroke-dashoffset="0"/>
+            <!-- Tax -->
+            <circle class="donut-arc" id="arc-tax" cx="50" cy="50" r="35"
+                    stroke="#ef4444" stroke-dasharray="0 220" stroke-dashoffset="0"/>
+            <!-- SSO -->
+            <circle class="donut-arc" id="arc-sso" cx="50" cy="50" r="35"
+                    stroke="#f59e0b" stroke-dasharray="0 220" stroke-dashoffset="0"/>
+          </svg>
+          <div class="donut-center">
+            <div class="donut-center-val" id="donut-net-pct">100%</div>
+            <div class="donut-center-label">สุทธิ</div>
+          </div>
+        </div>
+        <div class="donut-legend">
+          <div class="legend-item">
+            <div class="legend-dot bg-green"></div>
+            <div class="legend-name">รายได้สุทธิ</div>
+            <div class="legend-pct" id="leg-net">100%</div>
+          </div>
+          <div class="legend-item">
+            <div class="legend-dot bg-red"></div>
+            <div class="legend-name">ภาษีเงินได้</div>
+            <div class="legend-pct" id="leg-tax">0%</div>
+          </div>
+          <div class="legend-item">
+            <div class="legend-dot bg-amber"></div>
+            <div class="legend-name">ประกันสังคม</div>
+            <div class="legend-pct" id="leg-sso">0%</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- VISUAL BAR -->
+      <div class="compare-bar-wrap">
+        <div class="compare-bar-labels">
+          <span>รายได้สุทธิ <span id="cb-net-pct">100%</span></span>
+          <span>ภาษี + ประกันสังคม <span id="cb-tax-pct">0%</span></span>
+        </div>
+        <div class="compare-bar" id="compareBar">
+          <div class="compare-bar-net" id="compareBarNet" style="width:100%;">
+            <span id="compareBarNetText">100%</span>
+          </div>
+          <div class="compare-bar-tax" id="compareBarTax"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAX LADDER CHART -->
+    <div class="card">
+      <div class="card-title"><span class="dot" style="background:var(--purple)"></span>ภาษีแต่ละขั้น (Bracket)</div>
+      <div class="ladder-chart" id="ladderChart">
+        <!-- generated -->
+      </div>
+    </div>
+
+    <!-- BAR CHART: INCOME COMPOSITION -->
+    <div class="card full-card">
+      <div class="card-title"><span class="dot" style="background:var(--primary)"></span>วิเคราะห์ภาษี: เปรียบเทียบค่าลดหย่อนแต่ละรายการ</div>
+      <div class="bars-wrap" id="deductBars">
+        <!-- generated -->
+      </div>
+    </div>
+
+  </div><!-- /grid -->
+</div><!-- /main -->
+
+<div class="footer">
+  คำนวณตามอัตราภาษีเงินได้บุคคลธรรมดา ปี 2569 | กรมสรรพากร rd.go.th
+  <br>ข้อมูลนี้ใช้เพื่อเป็นแนวทางเท่านั้น กรุณาตรวจสอบกับกรมสรรพากรก่อนยื่นภาษีจริง
+</div>
+
+<script>
+// ==================== DATA ====================
+const TAX_BRACKETS = [
+  { min: 0,         max: 150000,   rate: 0   },
+  { min: 150000,    max: 300000,   rate: 0.05 },
+  { min: 300000,    max: 500000,   rate: 0.10 },
+  { min: 500000,    max: 750000,   rate: 0.15 },
+  { min: 750000,    max: 1000000,  rate: 0.20 },
+  { min: 1000000,   max: 2000000,  rate: 0.25 },
+  { min: 2000000,   max: 5000000,  rate: 0.30 },
+  { min: 5000000,   max: Infinity, rate: 0.35 },
+];
+
+const BRACKET_COLORS = [
+  '#10b981','#22d3ee','#3b82f6','#8b5cf6','#f59e0b','#f97316','#ef4444','#dc2626'
+];
+
+const DEDUCTIONS_CONFIG = [
+  { id:'personal',   label:'ลดหย่อนส่วนตัว',       icon:'👤', default:true,  amount:60000,  fixed:true  },
+  { id:'expense',    label:'ค่าใช้จ่าย 50%',        icon:'📋', default:true,  amount:0,      fixed:true, auto:true },
+  { id:'sso',        label:'ประกันสังคม',            icon:'🛡️', default:true,  amount:0,      fixed:true, auto:true },
+  { id:'life',       label:'ประกันชีวิต',            icon:'❤️', default:true,  amount:0,      fixed:false, maxFunc: (gross) => Math.min(100000, gross * 0.15) },
+  { id:'health',     label:'ประกันสุขภาพ',           icon:'🏥', default:false, amount:0,      fixed:false, maxFunc: (gross) => 25000 },
+  { id:'parent',     label:'ดูแลพ่อแม่ (2 คน)',      icon:'👴', default:false, amount:60000,  fixed:true  },
+  { id:'child',      label:'บุตร 1 คน',              icon:'👶', default:false, amount:30000,  fixed:true  },
+  { id:'rmf',        label:'กองทุน RMF',             icon:'📈', default:false, amount:0,      fixed:false, maxFunc: (gross) => gross * 0.3 },
+  { id:'thai_esg',   label:'Thai ESG',               icon:'🌿', default:false, amount:0,      fixed:false, maxFunc: (gross) => gross * 0.3 },
+  { id:'home_int',   label:'ดอกเบี้ยบ้าน',           icon:'🏠', default:false, amount:0,      fixed:false, maxFunc: (gross) => 200000 },
+  { id:'e_receipt',  label:'Easy E-Receipt 2.0',      icon:'🧾', default:false, amount:0,      fixed:false, maxFunc: (gross) => 50000 },
+];
+
+let currentPeriod = 'year';
+let currentAnnualSalary = 600000;
+let deductionState = {};
+
+// ==================== INIT ====================
+function init() {
+  DEDUCTIONS_CONFIG.forEach(d => {
+    deductionState[d.id] = { enabled: d.default, amount: d.amount };
+  });
+  buildDeductionUI();
+  recalculate();
+}
+
+function buildDeductionUI() {
+  const list = document.getElementById('deductionList');
+  list.innerHTML = '';
+  DEDUCTIONS_CONFIG.forEach(d => {
+    const item = document.createElement('div');
+    item.className = 'deduction-item';
+    const isAuto = d.auto;
+    const isEditable = !d.fixed || d.id === 'life' || d.id === 'health' || d.id === 'rmf' || d.id === 'thai_esg' || d.id === 'home_int' || d.id === 'e_receipt';
+
+    item.innerHTML = `
+      <label for="toggle_${d.id}">
+        <span class="icon">${d.icon}</span>
+        ${d.label}
+      </label>
+      ${!d.fixed && !d.auto ? `<div class="custom-input" style="padding:4px 8px; gap:4px;">
+        <input type="number" id="amt_${d.id}" value="${d.amount}" placeholder="0"
+               style="width:70px;"
+               oninput="onAmountChange('${d.id}',this.value)"
+               ${deductionState[d.id].enabled ? '' : 'disabled'}>
+        <span style="font-size:11px;color:var(--text3);">บาท</span>
+      </div>` : `<div class="deduction-val" id="dval_${d.id}">${d.auto ? 'อัตโนมัติ' : fmt(d.amount)}</div>`}
+      <label class="toggle" style="margin-left:${!d.fixed && !d.auto ? '4px' : '8px'};">
+        <input type="checkbox" id="toggle_${d.id}" ${deductionState[d.id].enabled ? 'checked' : ''}
+               onchange="onToggle('${d.id}',this.checked)">
+        <span class="toggle-track"></span>
+      </label>
+    `;
+    list.appendChild(item);
+  });
+}
+
+// ==================== EVENTS ====================
+function setPeriod(period, btn) {
+  currentPeriod = period;
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  btn.classList.add('active');
+  const labels = { year:'ต่อปี', month:'ต่อเดือน', day:'ต่อวัน', hour:'ต่อชั่วโมง' };
+  document.getElementById('periodHint').textContent = labels[period] + ' (บาท)';
+  document.getElementById('salarySubDisplay').textContent = labels[period];
+
+  // convert display
+  const vals = { year:1, month:12, day:365, hour:2080 };
+  const display = currentAnnualSalary / vals[period];
+  document.getElementById('salaryInput').value = Math.round(display);
+  updateSalaryDisplay(display, period);
+}
+
+function onSliderChange(val) {
+  currentAnnualSalary = parseFloat(val) || 0;
+  const vals = { year:1, month:12, day:365, hour:2080 };
+  const display = currentAnnualSalary / vals[currentPeriod];
+  document.getElementById('salaryInput').value = Math.round(display);
+  updateSalaryDisplay(display, currentPeriod);
+  recalculate();
+}
+
+function onInputChange(val) {
+  const v = parseFloat(val) || 0;
+  const vals = { year:1, month:12, day:365, hour:2080 };
+  currentAnnualSalary = v * vals[currentPeriod];
+  document.getElementById('salarySlider').value = Math.min(currentAnnualSalary, 5000000);
+  updateSalaryDisplay(v, currentPeriod);
+  recalculate();
+}
+
+function updateSalaryDisplay(amount, period) {
+  const units = { year:'ต่อปี', month:'ต่อเดือน', day:'ต่อวัน', hour:'ต่อชั่วโมง' };
+  document.getElementById('salaryDisplay').textContent = '฿' + fmtShort(amount);
+  document.getElementById('salarySubDisplay').textContent = units[period];
+}
+
+function onToggle(id, checked) {
+  deductionState[id].enabled = checked;
+  const amtEl = document.getElementById('amt_' + id);
+  if (amtEl) amtEl.disabled = !checked;
+  recalculate();
+}
+
+function onAmountChange(id, val) {
+  deductionState[id].amount = parseFloat(val) || 0;
+  recalculate();
+}
+
+// ==================== CALCULATE ====================
+function recalculate() {
+  const gross = currentAnnualSalary;
+
+  // Expense deduction (50%, max 100000)
+  const expenseDeduct = Math.min(gross * 0.5, 100000);
+  deductionState['expense'].amount = expenseDeduct;
+  const dvalExp = document.getElementById('dval_expense');
+  if (dvalExp) dvalExp.textContent = '−' + fmt(expenseDeduct);
+
+  // SSO (5% of gross, max 9000)
+  const ssoAmt = deductionState['sso'] && deductionState['sso'].enabled ? Math.min(gross * 0.05, 9000) : 0;
+  deductionState['sso'].amount = ssoAmt;
+  const dvalSso = document.getElementById('dval_sso');
+  if (dvalSso) dvalSso.textContent = fmt(ssoAmt);
+
+  // Update amounts with max limits
+  DEDUCTIONS_CONFIG.forEach(d => {
+    if (d.maxFunc && deductionState[d.id].enabled) {
+      const maxAmt = d.maxFunc(gross);
+      deductionState[d.id].amount = Math.min(deductionState[d.id].amount || 0, maxAmt);
+      const amtEl = document.getElementById('amt_' + d.id);
+      if (amtEl) amtEl.value = deductionState[d.id].amount;
+    }
+  });
+
+  // Sum all deductions
+  let totalDeduct = 0;
+  let deductBreakdown = [];
+  DEDUCTIONS_CONFIG.forEach(d => {
+    if (deductionState[d.id] && deductionState[d.id].enabled) {
+      const amt = deductionState[d.id].amount;
+      if (d.id !== 'expense' && d.id !== 'sso') { // expense and sso are separate
+        totalDeduct += amt;
+        if (amt > 0) deductBreakdown.push({ label: d.icon + ' ' + d.label, amount: amt, id: d.id });
+      }
+    }
+  });
+
+  // Custom deduction
+  const customDeduct = parseFloat(document.getElementById('customDeduct').value) || 0;
+  if (customDeduct > 0) {
+    totalDeduct += customDeduct;
+    deductBreakdown.push({ label: '🎁 ลดหย่อนอื่นๆ', amount: customDeduct, id: 'custom' });
+  }
+
+  const taxableIncome = Math.max(0, gross - expenseDeduct - totalDeduct);
+  const incomeTax = calcTax(taxableIncome);
+  const totalTax = incomeTax + ssoAmt;
+  const netPay = gross - incomeTax - ssoAmt;
+
+  const avgRate = gross > 0 ? (incomeTax / gross) * 100 : 0;
+  const marginalRate = getMarginalRate(taxableIncome);
+
+  // Update UI
+  setEl('r-gross', '฿' + fmt(gross));
+  setEl('r-expense', '−฿' + fmt(expenseDeduct));
+  setEl('r-deduct', '−฿' + fmt(totalDeduct));
+  setEl('r-taxable', '฿' + fmt(taxableIncome));
+  setEl('r-income-tax', '−฿' + fmt(incomeTax));
+  setEl('r-sso', '−฿' + fmt(ssoAmt));
+  setEl('r-net', '฿' + fmt(netPay));
+  setEl('r-avg-rate', avgRate.toFixed(1) + '%');
+  setEl('r-marginal-rate', (marginalRate * 100).toFixed(0) + '%');
+
+  setEl('netPayYear', '฿' + fmt(netPay));
+  setEl('netPayMonth', '฿' + fmt(netPay / 12) + ' ต่อเดือน');
+
+  setEl('m-gross', '฿' + fmt(gross / 12));
+  setEl('m-tax', '฿' + fmt((incomeTax + ssoAmt) / 12));
+  setEl('m-net', '฿' + fmt(netPay / 12));
+  setEl('m-day', '฿' + fmt(netPay / 365));
+
+  // Summary bar
+  setEl('s-gross', fmtShort(gross) + ' ฿');
+  setEl('s-tax', fmtShort(incomeTax + ssoAmt) + ' ฿');
+  setEl('s-net', fmtShort(netPay) + ' ฿');
+  setEl('s-rate', avgRate.toFixed(1) + '%');
+
+  // Charts
+  updateDonut(gross, incomeTax, ssoAmt, netPay);
+  updateLadder(taxableIncome);
+  updateDeductBars(deductBreakdown, expenseDeduct, gross);
+}
+
+function calcTax(taxable) {
+  let tax = 0;
+  TAX_BRACKETS.forEach(b => {
+    if (taxable > b.min) {
+      const portion = Math.min(taxable, b.max === Infinity ? taxable : b.max) - b.min;
+      tax += portion * b.rate;
+    }
+  });
+  return Math.max(0, tax);
+}
+
+function getMarginalRate(taxable) {
+  for (let i = TAX_BRACKETS.length - 1; i >= 0; i--) {
+    if (taxable > TAX_BRACKETS[i].min) return TAX_BRACKETS[i].rate;
+  }
+  return 0;
+}
+
+// ==================== CHARTS ====================
+function updateDonut(gross, incomeTax, ssoAmt, netPay) {
+  const circ = 2 * Math.PI * 35; // ~220
+  const totalTax = incomeTax + ssoAmt;
+  const netPct = gross > 0 ? netPay / gross : 1;
+  const taxPct = gross > 0 ? incomeTax / gross : 0;
+  const ssoPct = gross > 0 ? ssoAmt / gross : 0;
+
+  const netDash = netPct * circ;
+  const taxDash = taxPct * circ;
+  const ssoDash = ssoPct * circ;
+
+  const arcNet = document.getElementById('arc-net');
+  const arcTax = document.getElementById('arc-tax');
+  const arcSso = document.getElementById('arc-sso');
+
+  arcNet.style.strokeDasharray = `${netDash} ${circ}`;
+  arcNet.style.strokeDashoffset = '0';
+
+  arcTax.style.strokeDasharray = `${taxDash} ${circ}`;
+  arcTax.style.strokeDashoffset = -netDash;
+
+  arcSso.style.strokeDasharray = `${ssoDash} ${circ}`;
+  arcSso.style.strokeDashoffset = -(netDash + taxDash);
+
+  const np = (netPct * 100).toFixed(1);
+  const tp = (taxPct * 100).toFixed(1);
+  const sp = (ssoPct * 100).toFixed(1);
+
+  setEl('donut-net-pct', np + '%');
+  setEl('leg-net', np + '%');
+  setEl('leg-tax', tp + '%');
+  setEl('leg-sso', sp + '%');
+
+  const totalTaxPct = ((taxPct + ssoPct) * 100).toFixed(1);
+  setEl('cb-net-pct', np + '%');
+  setEl('cb-tax-pct', totalTaxPct + '%');
+  const compareBarNet = document.getElementById('compareBarNet');
+  compareBarNet.style.width = np + '%';
+  document.getElementById('compareBarNetText').textContent = np + '%';
+  const cbTax = document.getElementById('compareBarTax');
+  cbTax.textContent = totalTaxPct + '%';
+}
+
+const BRACKET_LABELS = ['ยกเว้น','5%','10%','15%','20%','25%','30%','35%'];
+const BRACKET_RANGES = ['0 – 150K','150K – 300K','300K – 500K','500K – 750K','750K – 1M','1M – 2M','2M – 5M','5M+'];
+
+function updateLadder(taxable) {
+  const container = document.getElementById('ladderChart');
+  container.innerHTML = '';
+
+  TAX_BRACKETS.forEach((b, i) => {
+    const maxPortionDisplay = b.max === Infinity ? (taxable > b.min ? taxable - b.min : 0) : b.max - b.min;
+    const actualPortion = taxable > b.min ? Math.min(taxable, b.max === Infinity ? taxable : b.max) - b.min : 0;
+    const tax = actualPortion * b.rate;
+    const pct = maxPortionDisplay > 0 ? Math.min(actualPortion / maxPortionDisplay, 1) : 0;
+
+    const row = document.createElement('div');
+    row.className = 'ladder-row';
+
+    const barWidth = Math.max(pct * 100, 0);
+    const color = BRACKET_COLORS[i];
+
+    row.innerHTML = `
+      <div class="ladder-rate">${BRACKET_LABELS[i]}</div>
+      <div class="ladder-bar-wrap">
+        <div style="position:relative;">
+          <div style="height:10px;background:var(--border);border-radius:100px;overflow:hidden;margin-bottom:3px;">
+            <div style="height:100%;background:${color};border-radius:100px;width:${barWidth}%;transition:width .5s cubic-bezier(.4,0,.2,1);"></div>
+          </div>
+          <div style="font-size:11px;color:var(--text3);">${BRACKET_RANGES[i]}</div>
+        </div>
+      </div>
+      <div class="ladder-tax" style="color:${actualPortion > 0 ? color : 'var(--text3)'};">
+        ${actualPortion > 0 ? '−฿' + fmtShort(tax) : '–'}
+      </div>
+    `;
+    container.appendChild(row);
+  });
+}
+
+function updateDeductBars(deductBreakdown, expenseDeduct, gross) {
+  const container = document.getElementById('deductBars');
+  container.innerHTML = '';
+
+  const allItems = [
+    { label: '📋 ค่าใช้จ่าย 50%', amount: expenseDeduct, color: '#64748b' },
+    ...deductBreakdown.map((d, i) => ({
+      ...d,
+      color: ['#2563eb','#10b981','#f59e0b','#8b5cf6','#ef4444','#06b6d4','#ec4899','#f97316'][i % 8]
+    }))
+  ];
+
+  const maxAmt = Math.max(...allItems.map(d => d.amount), 1);
+
+  allItems.forEach(item => {
+    if (item.amount <= 0) return;
+    const pct = (item.amount / maxAmt * 100).toFixed(1);
+    const row = document.createElement('div');
+    row.className = 'bar-row';
+    row.innerHTML = `
+      <div class="bar-row-header">
+        <span class="bar-row-label">${item.label}</span>
+        <span class="bar-row-val" style="color:${item.color};">−฿${fmt(item.amount)}</span>
+      </div>
+      <div class="bar-track">
+        <div class="bar-fill" style="width:${pct}%;background:${item.color};"></div>
+      </div>
+    `;
+    container.appendChild(row);
+  });
+
+  if (allItems.length === 0 || allItems.every(i => i.amount <= 0)) {
+    container.innerHTML = '<div style="text-align:center;color:var(--text3);padding:20px;font-size:14px;">ยังไม่มีค่าลดหย่อน</div>';
+  }
+}
+
+// ==================== UTILS ====================
+function fmt(n) {
+  return Math.round(n).toLocaleString('th-TH');
+}
+
+function fmtShort(n) {
+  if (n >= 1000000) return (n / 1000000).toFixed(2) + ' ล้าน';
+  if (n >= 100000) return (n / 1000).toFixed(0) + 'K';
+  if (n >= 1000) return (n / 1000).toFixed(1) + 'K';
+  return Math.round(n).toLocaleString('th-TH');
+}
+
+function setEl(id, val) {
+  const el = document.getElementById(id);
+  if (el) el.textContent = val;
+}
+
+// ==================== START ====================
+init();
+</script>
+</body>
+</html>
